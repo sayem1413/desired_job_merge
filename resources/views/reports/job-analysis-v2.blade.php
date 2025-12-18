@@ -29,9 +29,6 @@
         {{ $block['parent']['match'] ?? '—' }}
         ({{ $block['parent']['score'] }}%)
         —
-        {{-- <span class="{{ strtolower(str_replace(' ', '', $block['parent']['status'])) }}">
-            {{ $block['parent']['status'] }}
-        </span> --}}
         <span class="
             {{ $block['parent']['status'] === 'Strong Match' ? 'strong' :
                ($block['parent']['status'] === 'Partial Match' ? 'partial' : 'none') }}">
@@ -55,9 +52,6 @@
                 <td>{{ $childValue['csv'] }}</td>
                 <td>{{ $childValue['match'] ?? '—' }}</td>
                 <td>{{ $childValue['score'] }}%</td>
-                {{-- <td class="{{ strtolower(str_replace(' ', '', $child['status'])) }}">
-                    {{ $child['status'] }}
-                </td> --}}
                 <td class="
                     {{ $childValue['status'] === 'Strong Match' ? 'strong' :
                         ($childValue['status'] === 'Partial Match' ? 'partial' : 'none') }}">
