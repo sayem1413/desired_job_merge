@@ -16,7 +16,7 @@ class DesiredJobTableController extends Controller
     {
         // $job = new LogJobSimilarity();
 
-        return $this->handle();
+        return $this->handle1();
         // dd('Ok');
     }
 
@@ -289,7 +289,7 @@ class DesiredJobTableController extends Controller
 
     public function handle1()
     {
-        $csvPath = storage_path('app/file/jobs.csv');
+        $csvPath = storage_path('app/files/jobs.csv');
 
         if (!file_exists($csvPath)) {
             $this->error("CSV file not found.");
@@ -300,6 +300,7 @@ class DesiredJobTableController extends Controller
 
         // Fetch all DB titles once (performance-safe)
         $dbTitles = DesiredJob::pluck('title')->map(fn ($t) => trim($t))->toArray();
+        // $dbTitles = [];
 
         $uniqueCategories = collect($rows)
             ->pluck('Category')
@@ -307,38 +308,40 @@ class DesiredJobTableController extends Controller
             ->unique()
             ->values();
 
-        Log::info('========== JOB SIMILARITY CHECK STARTED ==========');
+        // dd($uniqueCategories);
 
-        Log::info('========== Parent Category Matching started ==========');
+        $this->info('========== JOB SIMILARITY CHECK STARTED ==========');
+
+        $this->info('========== Parent Category Matching started ==========');
 
         foreach ($uniqueCategories as $category) {
             $categoryMatches = $this->findMatches($category, $dbTitles);
 
             if (empty($categoryMatches)) {
-                Log::info("'{$category}' => NO MATCH FOUND");
+                $this->info("'{$category}' => NO MATCH FOUND");
             } else {
-                Log::info("'{$category}' => " . json_encode($categoryMatches));
+                $this->info("'{$category}' => " . json_encode($categoryMatches));
             }
         }
 
-        Log::info('========== Parent Category Matching end ==========');
+        $this->info('========== Parent Category Matching end ==========');
         
-        Log::info('========== Child Category Matching started ==========');
+        $this->info('========== Child Category Matching started ==========');
 
         foreach ($rows as $row) {
             $title = trim($row['Title']);
             $titleMatches = $this->findMatches($title, $dbTitles);
 
             if (empty($titleMatches)) {
-                Log::info("'{$title}' => NO MATCH FOUND");
+                $this->info("'{$title}' => NO MATCH FOUND");
             } else {
-                Log::info("'{$title}' => " . json_encode($titleMatches));
+                $this->info("'{$title}' => " . json_encode($titleMatches));
             }
         }
 
-        Log::info('========== Child Category Matching end ==========');
+        $this->info('========== Child Category Matching end ==========');
 
-        Log::info('========== JOB SIMILARITY CHECK FINISHED ==========');
+        $this->info('========== JOB SIMILARITY CHECK FINISHED ==========');
     }
 
     /**
