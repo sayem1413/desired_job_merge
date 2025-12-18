@@ -364,11 +364,11 @@ class DesiredJobTableController extends Controller
         return $rows;
     }
 
-    private function findMatches(string $needle, array $haystack): array
+    private function findMatches(string $needle, array $dbTitles): array
     {
         $matches = [];
 
-        foreach ($haystack as $dbTitle) {
+        foreach ($dbTitles as $dbTitle) {
             similar_text(
                 $this->normalize($needle),
                 $this->normalize($dbTitle),
