@@ -301,14 +301,17 @@ class DesiredJobTableController extends Controller
         // Fetch all DB titles once (performance-safe)
         $dbTitles = DesiredJob::pluck('title')->map(fn ($t) => trim($t))->toArray();
 
+        $uniqueCategories = collect($rows)
+            ->pluck('Category')
+            ->map(fn ($v) => trim($v))
+            ->unique()
+            ->values();
+
         Log::info('========== JOB SIMILARITY CHECK STARTED ==========');
 
-        foreach ($rows as $row) {
+        Log::info('========== Parent Category Matching started ==========');
 
-            // -------------------------
-            // CATEGORY (Parent)
-            // -------------------------
-            $category = trim($row['Category']);
+        foreach ($uniqueCategories as $category) {
             $categoryMatches = $this->findMatches($category, $dbTitles);
 
             if (empty($categoryMatches)) {
@@ -316,10 +319,13 @@ class DesiredJobTableController extends Controller
             } else {
                 Log::info("'{$category}' => " . json_encode($categoryMatches));
             }
+        }
 
-            // -------------------------
-            // TITLE (Child)
-            // -------------------------
+        Log::info('========== Parent Category Matching end ==========');
+        
+        Log::info('========== Child Category Matching started ==========');
+
+        foreach ($rows as $row) {
             $title = trim($row['Title']);
             $titleMatches = $this->findMatches($title, $dbTitles);
 
@@ -330,9 +336,9 @@ class DesiredJobTableController extends Controller
             }
         }
 
-        Log::info('========== JOB SIMILARITY CHECK FINISHED ==========');
+        Log::info('========== Child Category Matching end ==========');
 
-        $this->info('Similarity check logged to laravel.log');
+        Log::info('========== JOB SIMILARITY CHECK FINISHED ==========');
     }
 
     /**
