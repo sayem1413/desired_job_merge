@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use App\Models\DesiredJob;
 use Barryvdh\DomPDF\Facade\Pdf;
-use Illuminate\Support\Facades\Log;
 
 class AnalysisReportV2Controller extends Controller
 {
