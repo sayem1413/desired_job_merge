@@ -1,23 +1,35 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Console\Commands;
 
+use Illuminate\Console\Command;
 use App\Models\DesiredSkill;
 
-class ManipulateDbTableController extends Controller
+class DesiredSkillMerge extends Command
 {
+    /**
+     * The name and signature of the console command.
+     *
+     * @var string
+     */
+    protected $signature = 'desired-skill:merge';
+
+    /**
+     * The console command description.
+     *
+     * @var string
+     */
+    protected $description = 'Merge desired skills table merge from csv data';
+
     protected int $strongMatch = 95;
     protected int $partialMatch = 80;
 
-    public function updateDesiredJobsTable()
+    /**
+     * Execute the console command.
+     */
+    public function handle()
     {
-        ini_set('memory_limit', '512M');
-
         $report = $this->analyze();
-
-        dd(
-            $report
-        );
 
         return $this->updateTable($report);
     }
@@ -76,19 +88,12 @@ class ManipulateDbTableController extends Controller
             }
         }
 
-        /* return [
+        return [
             'Parent Found' => $parentMatchCount,
             'Parent Created' => $parentNotMatchCount,
             'Child Updated' => $parentNotMatchCount,
             'Child Created' => $childNotMatchCount,
-        ]; */
-
-        dd(
-            'Parent Found = ' . $parentMatchCount,
-            'Parent Created = ' . $parentNotMatchCount,
-            'Child Updated = ' . $parentNotMatchCount,
-            'Child Created = ' . $childNotMatchCount,
-        );
+        ];
     }
 
     /**
